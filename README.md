@@ -17,7 +17,6 @@
 ```
 export PROJECT_ID=$(gcloud config list --format 'value(core.project)')
 terraform init
-terraform init
 terraform plan -var "project_id=$PROJECT_ID"
 terraform apply -var "project_id=$PROJECT_ID"
 ```
