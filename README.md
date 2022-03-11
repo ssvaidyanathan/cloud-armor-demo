@@ -3,11 +3,11 @@
 ## Pre-Requisites
 - Google Cloud Account 
 - Billing Account
-- Google Cloud Project
+- Google Cloud Project with appropriate access to configure all the resources (For ex `Editor`)
 
 ## Installations
 - gcloud SDK
-- Terraform
+- Terraform v1.x or higher
 
 ## Steps
 - In your terminal, run `gcloud auth application-default login`
