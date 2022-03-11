@@ -20,3 +20,5 @@ terraform init
 terraform plan -var "project_id=$PROJECT_ID"
 terraform apply -var "project_id=$PROJECT_ID"
 ```
+- Once the setup is complete, you will see few cURL commands to execute
+- The setup is complete when the cURL commands give a valid response
