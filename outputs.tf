@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+output "project_id" {
+  value       = google_compute_network.vpc_network.project
+  description = "VPC project id"
+}
 
 output "network_name" {
   value       = google_compute_network.vpc_network.name
@@ -25,13 +29,7 @@ output "network_self_link" {
   description = "The URI of the VPC being created"
 }
 
-output "project_id" {
-  value       = google_compute_network.vpc_network.project
-  description = "VPC project id"
+output "lb_url" {
+  value       = google_compute_global_forwarding_rule.forwarding_rule.ip_address
+  description = "The URI of the VPC being created"
 }
-
-output "auto" {
-  value       = google_compute_network.vpc_network.auto_create_subnetworks
-  description = "The value of the auto mode setting"
-}
-
