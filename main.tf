@@ -121,6 +121,10 @@ resource "google_compute_instance_group" "ig-red" {
   instances = [
     google_compute_instance.backend_vms[0].id
   ]
+  named_port {
+    name = "http"
+    port = "80"
+  }
 }
 
 resource "google_compute_instance_group" "ig-blue" {
@@ -129,4 +133,62 @@ resource "google_compute_instance_group" "ig-blue" {
   instances = [
     google_compute_instance.backend_vms[1].id
   ]
+  named_port {
+    name = "http"
+    port = "80"
+  }
+}
+
+resource "google_compute_health_check" "tcp-health-check" {
+  name = "tcp-health-check"
+
+  timeout_sec         = 5
+  check_interval_sec  = 5
+  healthy_threshold   = 2
+  unhealthy_threshold = 2
+
+
+  tcp_health_check {
+    port = 80
+  }
+}
+
+resource "google_compute_backend_service" "backend-blue" {
+  name          = "backend-blue"
+  health_checks = [google_compute_health_check.tcp-health-check.id]
+  backend {
+    group           = google_compute_instance_group.ig-blue.id
+    balancing_mode  = "UTILIZATION"
+    max_utilization = 0.8
+  }
+  protocol  = "HTTP"
+  port_name = "http"
+}
+
+resource "google_compute_backend_service" "backend-red" {
+  name          = "backend-red"
+  health_checks = [google_compute_health_check.tcp-health-check.id]
+  backend {
+    group           = google_compute_instance_group.ig-red.id
+    balancing_mode  = "UTILIZATION"
+    max_utilization = 0.8
+  }
+  protocol  = "HTTP"
+  port_name = "http"
+}
+
+resource "google_compute_url_map" "urlmap" {
+  name            = "cloudarmor-http-lb"
+  default_service = google_compute_backend_service.backend-red.id
+}
+
+resource "google_compute_target_http_proxy" "http_proxy" {
+  name    = "http-proxy"
+  url_map = google_compute_url_map.urlmap.id
+}
+
+resource "google_compute_global_forwarding_rule" "forwarding_rule" {
+  name       = "forwarding-rule"
+  target     = google_compute_target_http_proxy.http_proxy.id
+  port_range = "80"
 }
