@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-project_id = "change_this"
 network    = "cloudarmor-lab"
 exposure_subnets = [
   {
@@ -34,20 +33,6 @@ exposure_subnets = [
     ip_cidr_range      = "10.30.0.0/16"
     region             = "europe-west1"
     secondary_ip_range = null
-  }
-]
-client_vms = [
-  {
-    name         = "client-eu"
-    machine_type = "e2-micro"
-    zone         = "europe-west1-b"
-    subnetwork   = "client-europe-west1"
-  },
-  {
-    name         = "client-us"
-    machine_type = "e2-micro"
-    zone         = "us-west1-b"
-    subnetwork   = "client-us-west1"
   }
 ]
 backend_vms = [

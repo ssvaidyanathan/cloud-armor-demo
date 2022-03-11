@@ -19,7 +19,7 @@ provider "google" {
 }
 
 resource "google_compute_network" "vpc_network" {
-  delete_default_routes_on_create = true
+  delete_default_routes_on_create = false
   name                            = var.network
   auto_create_subnetworks         = false
   mtu                             = 1460
@@ -71,11 +71,10 @@ resource "google_compute_firewall" "cloudarmor-allow-https" {
   target_tags   = ["https-server"]
 }
 
-resource "google_compute_instance" "client_vms" {
-  count        = length(var.client_vms)
-  name         = var.client_vms[count.index].name
-  machine_type = var.client_vms[count.index].machine_type
-  zone         = var.client_vms[count.index].zone
+resource "google_compute_instance" "client-eu" {
+  name         = "client-eu"
+  machine_type = "e2-micro"
+  zone         = "europe-west1-b"
   boot_disk {
     initialize_params {
       image = "debian-cloud/debian-10"
@@ -85,7 +84,27 @@ resource "google_compute_instance" "client_vms" {
     scopes = ["cloud-platform"]
   }
   network_interface {
-    subnetwork = var.client_vms[count.index].subnetwork
+    subnetwork = google_compute_subnetwork.subnet[2].id
+    access_config {
+      // Ephemeral IP
+    }
+  }
+}
+
+resource "google_compute_instance" "client-us" {
+  name         = "client-us"
+  machine_type = "e2-micro"
+  zone         = "us-west1-b"
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-10"
+    }
+  }
+  service_account {
+    scopes = ["cloud-platform"]
+  }
+  network_interface {
+    subnetwork = google_compute_subnetwork.subnet[1].id
     access_config {
       // Ephemeral IP
     }
@@ -107,11 +126,15 @@ resource "google_compute_instance" "backend_vms" {
     scopes = ["cloud-platform"]
   }
   network_interface {
-    subnetwork = var.backend_vms[count.index].subnetwork
+    subnetwork = google_compute_subnetwork.subnet[0].id
     access_config {
       // Ephemeral IP
     }
   }
+  metadata = {
+    enable-oslogin = "true"
+  }
+
   metadata_startup_script = file(var.backend_vms[count.index].startup_script)
 }
 
@@ -180,6 +203,29 @@ resource "google_compute_backend_service" "backend-red" {
 resource "google_compute_url_map" "urlmap" {
   name            = "cloudarmor-http-lb"
   default_service = google_compute_backend_service.backend-red.id
+  host_rule {
+    hosts        = ["*"]
+    path_matcher = "allpaths"
+  }
+  path_matcher {
+    name            = "allpaths"
+    default_service = google_compute_backend_service.backend-red.id
+
+    path_rule {
+      paths = [
+        "/red/",
+        "/red/*"
+      ]
+      service = google_compute_backend_service.backend-red.id
+    }
+    path_rule {
+      paths = [
+        "/blue/",
+        "/blue/*"
+      ]
+      service = google_compute_backend_service.backend-blue.id
+    }
+  }
 }
 
 resource "google_compute_target_http_proxy" "http_proxy" {
