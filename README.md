@@ -22,3 +22,10 @@ terraform apply -var "project_id=$PROJECT_ID"
 ```
 - Once the setup is complete, you will see few cURL commands to execute
 - The setup is complete when the cURL commands give a valid response
+
+### To destroy all resources
+```
+export PROJECT_ID=$(gcloud config list --format 'value(core.project)')
+terraform init
+terraform destroy -var "project_id=$PROJECT_ID"
+```
