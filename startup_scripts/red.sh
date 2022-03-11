@@ -31,9 +31,10 @@ service apache2 stop
 service nginx status >> nginx.status
 service apache2 status >> apache.status
 cd /var/www/html
+apt-get -y install git
 git clone https://github.com/ethicalhack3r/DVWA.git
 cp /var/www/html/DVWA/config/config.inc.php.dist /var/www/html/DVWA/config/config.inc.php
-apt-get -y install libapache2-mod-php7.0 libapache2-mod-fastcgi php7.0-fpm php7.0 php-mysql php7.0-mbstring
+apt-get -y install libapache2-mod-php7.3 l php7.3-fpm php7.0 php-mysql php7.3-mbstring
 apt-get -y install install php7.0-gd
 chmod 777 /var/www/html/DVWA/hackable/uploads/
 chmod 777 /var/www/html/DVWA/external/phpids/0.6/lib/IDS/tmp/phpids_log.txt
