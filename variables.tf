@@ -34,3 +34,27 @@ variable "exposure_subnets" {
   }))
   default = []
 }
+
+variable "client_vms" {
+  description = "GCE instances"
+  type = list(object({
+    name         = string
+    machine_type = string
+    zone         = string
+    subnetwork   = string
+  }))
+  default = []
+}
+
+variable "backend_vms" {
+  description = "GCE instances"
+  type = list(object({
+    name           = string
+    machine_type   = string
+    zone           = string
+    tags           = list(string)
+    subnetwork     = string
+    startup_script = string
+  }))
+  default = []
+}

@@ -36,3 +36,35 @@ exposure_subnets = [
     secondary_ip_range = null
   }
 ]
+client_vms = [
+  {
+    name         = "client-eu"
+    machine_type = "e2-micro"
+    zone         = "europe-west1-b"
+    subnetwork   = "client-europe-west1"
+  },
+  {
+    name         = "client-us"
+    machine_type = "e2-micro"
+    zone         = "us-west1-b"
+    subnetwork   = "client-us-west1"
+  }
+]
+backend_vms = [
+  {
+    name           = "red"
+    machine_type   = "e2-micro"
+    zone           = "us-west1-b"
+    tags           = ["http-server"]
+    subnetwork     = "backend-us-west1"
+    startup_script = "./startup_scripts/red.sh"
+  },
+  {
+    name           = "blue"
+    machine_type   = "e2-micro"
+    zone           = "us-west1-b"
+    tags           = ["http-server"]
+    subnetwork     = "backend-us-west1"
+    startup_script = "./startup_scripts/blue.sh"
+  }
+]

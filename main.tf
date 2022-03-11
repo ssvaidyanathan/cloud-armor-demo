@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
- provider "google" {
-  project     = "${var.project_id}"
+provider "google" {
+  project = var.project_id
 }
 
 resource "google_compute_network" "vpc_network" {
@@ -69,4 +69,48 @@ resource "google_compute_firewall" "cloudarmor-allow-https" {
   priority      = 1000
   source_ranges = ["0.0.0.0/0"]
   target_tags   = ["https-server"]
+}
+
+resource "google_compute_instance" "client_vms" {
+  count        = length(var.client_vms)
+  name         = var.client_vms[count.index].name
+  machine_type = var.client_vms[count.index].machine_type
+  zone         = var.client_vms[count.index].zone
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-10"
+    }
+  }
+  service_account {
+    scopes = ["cloud-platform"]
+  }
+  network_interface {
+    subnetwork = var.client_vms[count.index].subnetwork
+    access_config {
+      // Ephemeral IP
+    }
+  }
+}
+
+resource "google_compute_instance" "backend_vms" {
+  count        = length(var.backend_vms)
+  name         = var.backend_vms[count.index].name
+  machine_type = var.backend_vms[count.index].machine_type
+  zone         = var.backend_vms[count.index].zone
+  tags         = var.backend_vms[count.index].tags
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-10"
+    }
+  }
+  service_account {
+    scopes = ["cloud-platform"]
+  }
+  network_interface {
+    subnetwork = var.backend_vms[count.index].subnetwork
+    access_config {
+      // Ephemeral IP
+    }
+  }
+  metadata_startup_script = file(var.backend_vms[count.index].startup_script)
 }
