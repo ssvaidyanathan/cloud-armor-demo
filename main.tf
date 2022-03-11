@@ -114,3 +114,19 @@ resource "google_compute_instance" "backend_vms" {
   }
   metadata_startup_script = file(var.backend_vms[count.index].startup_script)
 }
+
+resource "google_compute_instance_group" "ig-red" {
+  name = "ig-red"
+  zone = "us-west1-b"
+  instances = [
+    google_compute_instance.backend_vms[0].id
+  ]
+}
+
+resource "google_compute_instance_group" "ig-blue" {
+  name = "ig-blue"
+  zone = "us-west1-b"
+  instances = [
+    google_compute_instance.backend_vms[1].id
+  ]
+}
