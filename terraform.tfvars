@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-project_id = "ssv-demo-apigeex"
+project_id = "change_this"
 network    = "cloudarmor-lab"
 exposure_subnets = [
   {
