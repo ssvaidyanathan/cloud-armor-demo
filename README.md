@@ -7,6 +7,7 @@
 - The following org policies need to be updated if they are set:
     - `constraints/compute.vmExternalIpAccess` to ALLOW
     - `constraints/compute.requireShieldedVm` to false
+
 NOTE: You will need Org Admin role to update this if the inherited values are different
 
 ## Installations
