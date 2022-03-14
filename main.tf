@@ -222,6 +222,7 @@ resource "google_compute_backend_service" "backend-blue" {
   }
   protocol  = "HTTP"
   port_name = "http"
+  depends_on = [google_project_service.gcp_services]
 }
 
 resource "google_compute_backend_service" "backend-red" {
@@ -234,6 +235,7 @@ resource "google_compute_backend_service" "backend-red" {
   }
   protocol  = "HTTP"
   port_name = "http"
+  depends_on = [google_project_service.gcp_services]
 }
 
 resource "google_compute_url_map" "urlmap" {
