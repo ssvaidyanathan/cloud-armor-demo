@@ -8,6 +8,7 @@
 ## Installations
 - gcloud SDK
 - Terraform v1.x or higher
+- cURL
 
 ## Steps
 - In your terminal, run `gcloud auth application-default login`
