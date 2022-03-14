@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-network    = "cloudarmor-lab"
+gcp_service_list = [
+  "compute.googleapis.com" # Compute Engine API
+]
+network = "cloudarmor-lab"
 exposure_subnets = [
   {
     name               = "backend-us-west1"

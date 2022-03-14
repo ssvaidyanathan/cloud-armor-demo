@@ -18,11 +18,40 @@ provider "google" {
   project = var.project_id
 }
 
+resource "google_project_service" "gcp_services" {
+  count   = length(var.gcp_service_list)
+  project = var.project_id
+  service = var.gcp_service_list[count.index]
+
+  disable_dependent_services = true
+}
+
+resource "google_project_organization_policy" "vmExternalIpAccess" {
+  project    = var.project_id
+  constraint = "constraints/compute.vmExternalIpAccess"
+
+  list_policy {
+    allow {
+      all = true
+    }
+  }
+}
+
+resource "google_project_organization_policy" "requireShieldedVm" {
+  project    = var.project_id
+  constraint = "constraints/compute.requireShieldedVm"
+
+  boolean_policy {
+    enforced = false
+  }
+}
+
 resource "google_compute_network" "vpc_network" {
   delete_default_routes_on_create = false
   name                            = var.network
   auto_create_subnetworks         = false
   mtu                             = 1460
+  depends_on                      = [google_project_service.gcp_services]
 }
 
 resource "google_compute_subnetwork" "subnet" {
@@ -89,6 +118,7 @@ resource "google_compute_instance" "client-eu" {
       // Ephemeral IP
     }
   }
+  depends_on = [google_project_organization_policy.vmExternalIpAccess, google_project_organization_policy.requireShieldedVm]
 }
 
 resource "google_compute_instance" "client-us" {
@@ -109,6 +139,7 @@ resource "google_compute_instance" "client-us" {
       // Ephemeral IP
     }
   }
+  depends_on = [google_project_organization_policy.vmExternalIpAccess, google_project_organization_policy.requireShieldedVm]
 }
 
 resource "google_compute_instance" "backend_vms" {
@@ -136,6 +167,7 @@ resource "google_compute_instance" "backend_vms" {
   }
 
   metadata_startup_script = file(var.backend_vms[count.index].startup_script)
+  depends_on              = [google_project_organization_policy.vmExternalIpAccess, google_project_organization_policy.requireShieldedVm]
 }
 
 resource "google_compute_instance_group" "ig-red" {
@@ -148,6 +180,7 @@ resource "google_compute_instance_group" "ig-red" {
     name = "http"
     port = "80"
   }
+  depends_on = [google_project_organization_policy.vmExternalIpAccess, google_project_organization_policy.requireShieldedVm]
 }
 
 resource "google_compute_instance_group" "ig-blue" {
@@ -160,6 +193,7 @@ resource "google_compute_instance_group" "ig-blue" {
     name = "http"
     port = "80"
   }
+  depends_on = [google_project_organization_policy.vmExternalIpAccess, google_project_organization_policy.requireShieldedVm]
 }
 
 resource "google_compute_health_check" "tcp-health-check" {
@@ -174,6 +208,8 @@ resource "google_compute_health_check" "tcp-health-check" {
   tcp_health_check {
     port = 80
   }
+
+  depends_on = [google_project_service.gcp_services]
 }
 
 resource "google_compute_backend_service" "backend-blue" {
