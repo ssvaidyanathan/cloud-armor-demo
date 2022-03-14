@@ -8,7 +8,7 @@
     - `constraints/compute.vmExternalIpAccess` to ALLOW
     - `constraints/compute.requireShieldedVm` to false
 
-NOTE: You will need Org Admin role to update this if the inherited values are different
+NOTE: You will need Org Admin role to update these constraints if the inherited values are different
 
 ## Installations
 - gcloud SDK
