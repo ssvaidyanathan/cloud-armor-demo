@@ -17,7 +17,11 @@
 output "commands" {
   value = join("\n", [
     "################################################################################",
-    "##                          Run the following commands)                       ##",
+    "",
+    "##        Please wait for 3-5 mins for the provisioning to complete           ##",
+    "",
+    "################################################################################",
+    "##                          Run the following commands                        ##",
     "################################################################################",
     "",
     "curl ${google_compute_global_forwarding_rule.forwarding_rule.ip_address}/",
