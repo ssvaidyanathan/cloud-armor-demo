@@ -220,8 +220,12 @@ resource "google_compute_backend_service" "backend-blue" {
     balancing_mode  = "UTILIZATION"
     max_utilization = 0.8
   }
-  protocol  = "HTTP"
-  port_name = "http"
+  log_config {
+    enable      = true
+    sample_rate = 0.6
+  }
+  protocol   = "HTTP"
+  port_name  = "http"
   depends_on = [google_project_service.gcp_services]
 }
 
@@ -233,8 +237,12 @@ resource "google_compute_backend_service" "backend-red" {
     balancing_mode  = "UTILIZATION"
     max_utilization = 0.8
   }
-  protocol  = "HTTP"
-  port_name = "http"
+  log_config {
+    enable      = true
+    sample_rate = 0.6
+  }
+  protocol   = "HTTP"
+  port_name  = "http"
   depends_on = [google_project_service.gcp_services]
 }
 
