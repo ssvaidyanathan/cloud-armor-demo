@@ -26,25 +26,25 @@ resource "google_project_service" "gcp_services" {
   disable_dependent_services = true
 }
 
-resource "google_project_organization_policy" "vmExternalIpAccess" {
-  project    = var.project_id
-  constraint = "constraints/compute.vmExternalIpAccess"
+#resource "google_project_organization_policy" "vmExternalIpAccess" {
+  #project    = var.project_id
+  #constraint = "constraints/compute.vmExternalIpAccess"
 
-  list_policy {
-    allow {
-      all = true
-    }
-  }
-}
+  #list_policy {
+    #allow {
+      #all = true
+    #}
+  #}
+#}
 
-resource "google_project_organization_policy" "requireShieldedVm" {
-  project    = var.project_id
-  constraint = "constraints/compute.requireShieldedVm"
+#resource "google_project_organization_policy" "requireShieldedVm" {
+  #project    = var.project_id
+  #constraint = "constraints/compute.requireShieldedVm"
 
-  boolean_policy {
-    enforced = false
-  }
-}
+  #boolean_policy {
+    #enforced = false
+  #}
+#}
 
 resource "google_compute_network" "vpc_network" {
   delete_default_routes_on_create = false
@@ -118,7 +118,7 @@ resource "google_compute_instance" "client-eu" {
       // Ephemeral IP
     }
   }
-  depends_on = [google_project_organization_policy.vmExternalIpAccess, google_project_organization_policy.requireShieldedVm]
+  #depends_on = [google_project_organization_policy.vmExternalIpAccess, google_project_organization_policy.requireShieldedVm]
 }
 
 resource "google_compute_instance" "client-us" {
@@ -139,7 +139,7 @@ resource "google_compute_instance" "client-us" {
       // Ephemeral IP
     }
   }
-  depends_on = [google_project_organization_policy.vmExternalIpAccess, google_project_organization_policy.requireShieldedVm]
+  #depends_on = [google_project_organization_policy.vmExternalIpAccess, google_project_organization_policy.requireShieldedVm]
 }
 
 resource "google_compute_instance" "backend_vms" {
@@ -167,7 +167,7 @@ resource "google_compute_instance" "backend_vms" {
   }
 
   metadata_startup_script = file(var.backend_vms[count.index].startup_script)
-  depends_on              = [google_project_organization_policy.vmExternalIpAccess, google_project_organization_policy.requireShieldedVm]
+  #depends_on              = [google_project_organization_policy.vmExternalIpAccess, google_project_organization_policy.requireShieldedVm]
 }
 
 resource "google_compute_instance_group" "ig-red" {
@@ -180,7 +180,7 @@ resource "google_compute_instance_group" "ig-red" {
     name = "http"
     port = "80"
   }
-  depends_on = [google_project_organization_policy.vmExternalIpAccess, google_project_organization_policy.requireShieldedVm]
+  #depends_on = [google_project_organization_policy.vmExternalIpAccess, google_project_organization_policy.requireShieldedVm]
 }
 
 resource "google_compute_instance_group" "ig-blue" {
@@ -193,7 +193,7 @@ resource "google_compute_instance_group" "ig-blue" {
     name = "http"
     port = "80"
   }
-  depends_on = [google_project_organization_policy.vmExternalIpAccess, google_project_organization_policy.requireShieldedVm]
+  #depends_on = [google_project_organization_policy.vmExternalIpAccess, google_project_organization_policy.requireShieldedVm]
 }
 
 resource "google_compute_health_check" "tcp-health-check" {

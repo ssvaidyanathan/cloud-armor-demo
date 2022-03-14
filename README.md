@@ -4,6 +4,10 @@
 - Google Cloud Account 
 - Billing Account
 - Google Cloud Project with appropriate access to configure all the resources (For ex `Editor`)
+- The following org policies need to be updated if they are set:
+    - `constraints/compute.vmExternalIpAccess` to ALLOW
+    - `constraints/compute.requireShieldedVm` to false
+NOTE: You will need Org Admin role to update this if the inherited values are different
 
 ## Installations
 - gcloud SDK
@@ -13,7 +17,6 @@
 ## Steps
 - In your terminal, run `gcloud auth application-default login`
 - Run `gcloud init` and set the gcloud config to your GCP project
-- This script sets the `constraints/compute.vmExternalIpAccess` to ALLOW and  `constraints/compute.requireShieldedVm` to false
 - Run the following in your terminal
 ```
 export PROJECT_ID=$(gcloud config list --format 'value(core.project)')
