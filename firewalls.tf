@@ -62,6 +62,43 @@ resource "google_compute_subnetwork" "subnet" {
   region        = var.exposure_subnets[count.index].region
 }
 
+resource "google_compute_firewall" "allow-ssh-in" {
+  name      = "allow-ssh-in"
+  network   = google_compute_network.vpc_network.id
+  direction = "INGRESS"
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+  priority      = 1000
+  source_ranges = ["0.0.0.0/0"]
+}
+
+resource "google_compute_firewall" "cloudarmor-allow-http" {
+  name      = "cloudarmor-allow-http"
+  network   = google_compute_network.vpc_network.id
+  direction = "INGRESS"
+  allow {
+    protocol = "tcp"
+    ports    = ["80"]
+  }
+  priority      = 1000
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["http-server"]
+}
+
+resource "google_compute_firewall" "cloudarmor-allow-https" {
+  name      = "cloudarmor-allow-https"
+  network   = google_compute_network.vpc_network.id
+  direction = "INGRESS"
+  allow {
+    protocol = "tcp"
+    ports    = ["443"]
+  }
+  priority      = 1000
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["https-server"]
+}
 
 resource "google_compute_instance" "client-eu" {
   name         = "client-eu"
